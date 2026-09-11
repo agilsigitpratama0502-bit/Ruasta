@@ -9,6 +9,15 @@ let scanTerakhir = {
 };
 let resetStatusTimer = null;
 
+document.addEventListener("DOMContentLoaded", function () {
+    const status = document.getElementById("status");
+
+    if (status) {
+        status.innerHTML =
+            "🟡 JavaScript berhasil dijalankan di perangkat ini...";
+    }
+});
+
 const URL_GOOGLE_SHEETS =
     "https://script.google.com/macros/s/AKfycbzn9Sw74H4-GWQ7c_mVFPXYSnOkMLMbNjXDku0sjw01RedQeruRVWbG6DnvXzohuHo8/exec";
 
