@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Absensi Karyawan</title>
+
+    <link rel="stylesheet" href="style.css">
+
+</head>
+
+<body>
+
+    <div class="container">
+
+        <div class="top-header">
+
+    <div class="brand">
+
+        <img
+            src="logo.png"
+            alt="Logo PT. Sinar Emas Kahuripan"
+            class="logo"
+        >
+
+        <div class="brand-text">
+            <h1>ABSENSI KARYAWAN</h1>
+            <p>PT. SINAR EMAS KAHURIPAN</p>
+        </div>
+
+    </div>
+
+    <button id="btnFullscreen" class="btn-fullscreen">
+        ⛶ Layar Penuh
+    </button>
+    <button id="btnAdmin" class="btn-admin">
+    ⚙ Admin
+</button>
+
+</div>
+
+<div class="header-line"></div>
+        <div class="scanner">
+
+    <div class="scanner-title">
+    <span>📷</span>
+
+    <div>
+        <h2>SCAN QR ABSENSI</h2>
+        <p>Arahkan QR Code karyawan ke kamera</p>
+    </div>
+
+    <div class="digital-clock">
+        <div id="jamDigital">00:00:00</div>
+        <div id="tanggalDigital">Memuat tanggal...</div>
+    </div>
+</div>
+
+    <div id="reader"></div>
+
+    <div class="scan-hint">
+        <span class="scan-dot"></span>
+        <span>Siap menerima scan</span>
+    </div>
+
+</div>
+        <div class="dashboard">
+
+    <div class="card">
+        <span>Total Karyawan</span>
+        <strong id="totalKaryawan">0</strong>
+    </div>
+
+    <div class="card">
+        <span>Sudah Masuk</span>
+        <strong id="sudahMasuk">0</strong>
+    </div>
+
+    <div class="card">
+        <span>Belum Pulang</span>
+        <strong id="belumPulang">0</strong>
+    </div>
+
+    <div class="card">
+        <span>Sudah Pulang</span>
+        <strong id="sudahPulang">0</strong>
+    </div>
+    <div class="card">
+    <span>Belum Hadir</span>
+    <strong id="belumHadir">0</strong>
+</div>
+
+</div>
+
+        
+
+        <div id="status" class="status">
+            Menunggu scan...
+        </div>
+       <h2 class="riwayat-title">Riwayat Absensi</h2>
+
+<div class="filter-tanggal">
+    <label for="filterTanggal">Pilih Tanggal:</label>
+    <input type="date" id="filterTanggal">
+
+    <button id="btnRefresh" type="button">
+        🔄 Refresh Data
+    </button>
+</div>
+<button id="btnDownload" type="button">
+    📥 Download Laporan
+</button>
+
+<div class="table-container">
+
+    <table>
+
+        <thead>
+    <tr>
+        <th>No</th>
+        <th>ID</th>
+        <th>Nama</th>
+        <th>Bagian</th>
+        <th>Tanggal</th>
+        <th>Jam Masuk</th>
+        <th>Jam Pulang</th>
+        <th>Status</th>
+    </tr>
+</thead>
+
+        <tbody id="dataAbsensi">
+
+        </tbody>
+
+    </table>
+
+</div>
+
+    </div>
+    <!-- LOGIN ADMIN -->
+<div id="loginAdmin" class="login-admin">
+
+    <div class="login-box">
+
+        <div class="login-icon">⚙</div>
+
+        <h2>ADMIN LOGIN</h2>
+        <p>PT. SINAR EMAS KAHURIPAN</p>
+
+        <input
+            type="password"
+            id="passwordAdmin"
+            placeholder="Masukkan password"
+        >
+
+        <button id="btnLoginAdmin">
+            🔐 Masuk
+        </button>
+
+        <button id="btnBatalLogin" class="btn-batal-login">
+            Batal
+        </button>
+
+        <div id="loginError" class="login-error"></div>
+
+    </div>
+
+</div>
+
+    <!-- ================================
+     PANEL ADMIN
+================================= -->
+
+<div id="panelAdmin" class="panel-admin">
+
+    <div class="admin-header">
+        <div>
+            <h2>⚙ PANEL ADMIN</h2>
+            <p>PT. SINAR EMAS KAHURIPAN</p>
+        </div>
+
+        <button id="btnTutupAdmin" class="btn-tutup-admin">
+            ✕ Tutup
+        </button>
+    </div>
+
+    <div class="admin-menu">
+
+        <div class="admin-card" id="btnDataKaryawan">
+    <span>👥</span>
+    <div>
+        <strong>Data Karyawan</strong>
+        <small>Kelola data karyawan</small>
+    </div>
+</div>
+
+        <div class="admin-card" id="btnLaporanAbsensi">
+    <span>📊</span>
+    <div>
+        <strong>Laporan Absensi</strong>
+        <small>Lihat dan download laporan</small>
+    </div>
+</div>
+
+        <div class="admin-card" id="btnSinkronisasi">
+    <span>🔄</span>
+    <div>
+        <strong>Sinkronisasi Data</strong>
+        <small>Ambil data terbaru dari Google Sheets</small>
+    </div>
+</div>
+
+    </div>
+    <!-- DATA KARYAWAN -->
+<div id="dataKaryawanPanel" class="data-karyawan-panel">
+
+    <div class="data-karyawan-header">
+
+    <div>
+        <h3>👥 DATA KARYAWAN</h3>
+        <p>Database karyawan PT. SINAR EMAS KAHURIPAN</p>
+    </div>
+
+    <div class="data-karyawan-actions">
+
+        <button id="btnTambahKaryawan">
+            ＋ Tambah Karyawan
+        </button>
+
+        <button id="btnTutupDataKaryawan">
+            ✕ Tutup
+        </button>
+
+    </div>
+
+</div>
+
+<!-- FORM TAMBAH KARYAWAN -->
+<div id="formTambahKaryawan" class="form-tambah-karyawan">
+
+    <div class="form-tambah-header">
+        <div>
+            <h4 id="judulFormKaryawan">➕ Tambah Karyawan</h4>
+<p id="deskripsiFormKaryawan">Masukkan data karyawan baru</p>
+        </div>
+    </div>
+
+    <div class="form-grid">
+
+        <div class="form-group">
+            <label for="inputIDKaryawan">ID Karyawan</label>
+            <input
+                type="text"
+                id="inputIDKaryawan"
+                placeholder="Contoh: KRY009"
+            >
+            <input type="hidden" id="idKaryawanLama">
+        </div>
+
+        <div class="form-group">
+            <label for="inputNamaKaryawan">Nama</label>
+            <input
+                type="text"
+                id="inputNamaKaryawan"
+                placeholder="Nama karyawan"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="inputBagianKaryawan">Bagian</label>
+            <input
+                type="text"
+                id="inputBagianKaryawan"
+                placeholder="Contoh: Produksi"
+            >
+        </div>
+
+    </div>
+
+    <div class="form-actions">
+
+        <button id="btnSimpanKaryawan" type="button">
+    💾 Simpan Karyawan
+</button>
+
+<button
+    id="btnUpdateKaryawan"
+    type="button"
+    style="display: none;"
+>
+    🔄 Update Karyawan
+</button>
+
+        <button id="btnBatalTambahKaryawan" type="button">
+            Batal
+        </button>
+
+    </div>
+
+    <div id="statusTambahKaryawan"></div>
+
+</div>
+
+    <div class="data-karyawan-table">
+        <table>
+            <thead>
+    <tr>
+        <th>No</th>
+        <th>ID Karyawan</th>
+        <th>Nama</th>
+        <th>Bagian</th>
+        <th>Aksi</th>
+    </tr>
+</thead>
+
+            <tbody id="tabelDataKaryawan">
+            </tbody>
+        </table>
+    </div>
+
+</div>
+    <!-- LAPORAN ABSENSI -->
+<div id="laporanAbsensiPanel" class="data-karyawan-panel">
+
+    <div class="data-karyawan-header">
+
+        <div>
+            <h3>📊 LAPORAN ABSENSI</h3>
+            <p>Laporan absensi karyawan PT. SINAR EMAS KAHURIPAN</p>
+        </div>
+
+        <div class="data-karyawan-actions">
+
+            <button id="btnDownloadLaporan">
+                📥 Download Excel
+            </button>
+
+            <button id="btnTutupLaporan">
+                ✕ Tutup
+            </button>
+
+        </div>
+
+    </div>
+
+    <div class="filter-tanggal" style="padding: 20px;">
+
+        <label for="filterLaporanTanggal">
+            Pilih Tanggal:
+        </label>
+
+        <input
+            type="date"
+            id="filterLaporanTanggal"
+        >
+
+        <button
+            id="btnTampilkanLaporan"
+            type="button"
+        >
+            🔍 Tampilkan
+        </button>
+
+    </div>
+
+    <div class="data-karyawan-table">
+
+        <table>
+
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>ID Karyawan</th>
+                    <th>Nama</th>
+                    <th>Bagian</th>
+                    <th>Tanggal</th>
+                    <th>Jam Masuk</th>
+                    <th>Jam Pulang</th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+
+            <tbody id="tabelLaporanAbsensi">
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+</div>
+    <script src="https://unpkg.com/html5-qrcode"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+
+</html>
