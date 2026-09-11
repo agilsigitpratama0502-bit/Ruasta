@@ -1,2 +1,0 @@
-# Ruasta
-Web site baruku
