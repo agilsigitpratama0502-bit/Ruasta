@@ -148,7 +148,13 @@ localStorage.setItem(
 
 const dataKaryawan = {};
 
+function dataKaryawanClear() {
 
+    Object.keys(dataKaryawan).forEach(function(id) {
+        delete dataKaryawan[id];
+    });
+
+}
 // =====================================
 // AMBIL DATA KARYAWAN DARI GOOGLE SHEETS
 // =====================================
@@ -156,11 +162,27 @@ const dataKaryawan = {};
 function ambilDataKaryawan() {
 
     const callbackName =
-        "callbackKaryawan_" + Date.now();
+        "callbackKaryawan_" +
+        Date.now() +
+        "_" +
+        Math.random().toString(36).substring(2);
 
     const script =
         document.createElement("script");
 
+    let selesai = false;
+
+    function bersihkan() {
+        if (selesai) return;
+
+        selesai = true;
+
+        delete window[callbackName];
+
+        if (script.parentNode) {
+            script.parentNode.removeChild(script);
+        }
+    }
 
     window[callbackName] = function(data) {
 
@@ -169,41 +191,42 @@ function ambilDataKaryawan() {
             data
         );
 
+        if (!Array.isArray(data)) {
+            console.error(
+                "FORMAT DATA KARYAWAN TIDAK VALID:",
+                data
+            );
+
+            bersihkan();
+            return;
+        }
+
+        dataKaryawanClear();
 
         data.forEach(function(karyawan) {
 
-            dataKaryawan[karyawan.id] = {
+            if (!karyawan || !karyawan.id) {
+                return;
+            }
 
-                nama: karyawan.nama,
-
-                bagian: karyawan.bagian
-
+            dataKaryawan[
+                String(karyawan.id).trim()
+            ] = {
+                nama: karyawan.nama || "",
+                bagian: karyawan.bagian || ""
             };
-
         });
-
 
         console.log(
             "DATA KARYAWAN BERHASIL DIMUAT:",
             dataKaryawan
         );
 
-
         tampilkanAbsensi();
         updateDashboard();
-        
 
-
-        delete window[callbackName];
-
-        script.remove();
-
+        bersihkan();
     };
-
-
-    script.src =
-        `${URL_GOOGLE_SHEETS}?action=getKaryawan&callback=${callbackName}`;
-
 
     script.onerror = function() {
 
@@ -211,16 +234,29 @@ function ambilDataKaryawan() {
             "GAGAL MENGAMBIL DATA KARYAWAN DARI GOOGLE SHEETS"
         );
 
-
-        delete window[callbackName];
-
-        script.remove();
-
+        bersihkan();
     };
 
+    script.src =
+        URL_GOOGLE_SHEETS +
+        "?action=getKaryawan" +
+        "&callback=" +
+        encodeURIComponent(callbackName);
 
-    document.body.appendChild(script);
+    document.head.appendChild(script);
 
+    setTimeout(function() {
+
+        if (!selesai) {
+
+            console.error(
+                "TIMEOUT DATA KARYAWAN GOOGLE SHEETS"
+            );
+
+            bersihkan();
+        }
+
+    }, 15000);
 }
 
 
